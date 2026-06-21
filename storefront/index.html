@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aerovora Industries — Autonomous Bee Drones for Plant Caretaking</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a3e;
+    --text: #e8e8f0;
+    --text-dim: #8888a0;
+    --accent: #00e5a0;
+    --accent2: #7c5cfc;
+    --accent3: #f0a030;
+    --danger: #ff4060;
+    --gold: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── Navigation ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(10,10,15,0.9); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  nav .logo {
+    font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    display: flex; align-items: center; gap: 8px;
+  }
+  nav .logo svg { -webkit-text-fill-color: initial; }
+  nav a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; font-weight: 500; margin-left: 2rem; transition: color 0.2s; }
+  nav a:hover { color: var(--text); }
+
+  /* ── Hero ── */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden; padding: 120px 2rem 80px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,229,160,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(124,92,252,0.06) 0%, transparent 50%);
+  }
+  .hero-content { position: relative; z-index: 1; text-align: center; max-width: 800px; }
+  .hero h1 {
+    font-size: 4rem; font-weight: 900; letter-spacing: -2px; line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+  }
+  .hero p { font-size: 1.2rem; color: var(--text-dim); max-width: 600px; margin: 0 auto 2rem; }
+  .hero-badge {
+    display: inline-block; padding: 0.4rem 1.2rem; border-radius: 100px;
+    background: rgba(0,229,160,0.1); border: 1px solid rgba(0,229,160,0.3);
+    color: var(--accent); font-size: 0.85rem; font-weight: 600;
+    margin-bottom: 2rem; letter-spacing: 0.5px;
+  }
+  .hero-drone {
+    margin: 3rem auto; max-width: 500px;
+    filter: drop-shadow(0 0 80px rgba(0,229,160,0.15));
+  }
+
+  /* ── Sections ── */
+  section { padding: 100px 2rem; max-width: 1200px; margin: 0 auto; }
+  .section-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 0.5rem; }
+  .section-subtitle { color: var(--text-dim); font-size: 1.05rem; margin-bottom: 3rem; max-width: 600px; }
+
+  /* ── Product Grid ── */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
+  .product-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 2rem; transition: all 0.3s; cursor: default;
+    position: relative; overflow: hidden;
+  }
+  .product-card:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,229,160,0.08); }
+  .product-card .badge {
+    position: absolute; top: 1rem; right: 1rem;
+    padding: 0.25rem 0.75rem; border-radius: 100px;
+    font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .badge-popular { background: rgba(0,229,160,0.15); color: var(--accent); border: 1px solid rgba(0,229,160,0.3); }
+  .badge-new { background: rgba(124,92,252,0.15); color: var(--accent2); border: 1px solid rgba(124,92,252,0.3); }
+  .badge-best { background: rgba(240,160,48,0.15); color: var(--accent3); border: 1px solid rgba(240,160,48,0.3); }
+  .product-card .product-visual { margin: -1rem -1rem 1rem -1rem; text-align: center; }
+  .product-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .product-card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5; }
+  .product-card .price { font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .product-card .price-sub { font-size: 0.85rem; color: var(--text-dim); font-weight: 400; }
+  .product-card .specs { list-style: none; margin: 1rem 0; padding: 0; }
+  .product-card .specs li { font-size: 0.85rem; color: var(--text-dim); padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .product-card .specs li::before { content: "→ "; color: var(--accent); }
+
+  .btn {
+    display: inline-block; padding: 0.75rem 2rem; border-radius: 100px;
+    font-weight: 600; font-size: 0.95rem; text-decoration: none; cursor: pointer;
+    border: none; transition: all 0.2s;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,160,0.3); }
+  .btn-outline {
+    background: transparent; border: 1px solid var(--border); color: var(--text);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); box-shadow: none; }
+  .btn-small { padding: 0.5rem 1.25rem; font-size: 0.85rem; }
+
+  /* ── DaaS / Subscription ── */
+  .daas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+  .daas-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 2.5rem 2rem; text-align: center; transition: all 0.3s;
+    position: relative;
+  }
+  .daas-card.featured { border-color: var(--accent); background: linear-gradient(180deg, rgba(0,229,160,0.05), var(--surface)); }
+  .daas-card:hover { transform: translateY(-4px); }
+  .daas-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .daas-card .price { font-size: 2.8rem; font-weight: 900; color: var(--accent); }
+  .daas-card .price span { font-size: 1rem; font-weight: 400; color: var(--text-dim); }
+  .daas-card p { color: var(--text-dim); font-size: 0.9rem; margin: 1rem 0; }
+  .daas-card ul { list-style: none; text-align: left; margin: 1.5rem 0; }
+  .daas-card ul li { padding: 0.5rem 0; font-size: 0.9rem; color: var(--text-dim); }
+  .daas-card ul li::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+
+  /* ── Drone Specs ── */
+  .specs-table { width: 100%; border-collapse: collapse; margin: 2rem 0; }
+  .specs-table td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .specs-table td:first-child { color: var(--text-dim); font-weight: 500; width: 35%; }
+  .specs-table td:last-child { color: var(--text); }
+
+  /* ── Footer ── */
+  footer {
+    border-top: 1px solid var(--border); padding: 3rem 2rem;
+    text-align: center; color: var(--text-dim); font-size: 0.85rem;
+  }
+  footer .paypal { margin-top: 1rem; padding: 0.5rem 1rem; background: rgba(0,229,160,0.05); border-radius: 8px; display: inline-block; font-size: 0.8rem; }
+
+  /* ── Animations ── */
+  @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+  @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .rotor-spin { animation: spin 0.3s linear infinite; transform-origin: center; }
+  .float { animation: float 6s ease-in-out infinite; }
+  .pulse { animation: pulse 3s ease-in-out infinite; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2.5rem; }
+    nav a { margin-left: 1rem; font-size: 0.8rem; }
+    section { padding: 60px 1rem; }
+    .product-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Modal ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; backdrop-filter: blur(10px); }
+  .modal-overlay.active { display: flex; align-items: center; justify-content: center; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 2.5rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;
+  }
+  .modal h2 { font-size: 1.5rem; margin-bottom: 1rem; }
+  .modal .close { float: right; background: none; border: none; color: var(--text-dim); font-size: 1.5rem; cursor: pointer; }
+  .modal .close:hover { color: var(--text); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 0.3rem; font-weight: 500; }
+  .form-group input { width: 100%; padding: 0.7rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.95rem; }
+  .form-group input:focus { outline: none; border-color: var(--accent); }
+
+  .order-summary { background: var(--bg); border-radius: 12px; padding: 1.25rem; margin: 1rem 0; }
+  .order-summary .row { display: flex; justify-content: space-between; padding: 0.4rem 0; font-size: 0.9rem; }
+  .order-summary .total { font-weight: 700; font-size: 1.1rem; border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem; color: var(--accent); }
+
+  .paypal-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,229,160,0.08); border: 1px solid rgba(0,229,160,0.2);
+    padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; color: var(--text-dim);
+    margin-top: 1rem;
+  }
+
+  .particles {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute; width: 4px; height: 4px; background: var(--accent);
+    border-radius: 50%; opacity: 0;
+    animation: particleFloat 8s linear infinite;
+  }
+  @keyframes particleFloat {
+    0% { transform: translateY(100vh) scale(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  .tab-bar { display: flex; gap: 0; margin-bottom: 2rem; background: var(--surface); border-radius: 12px; padding: 0.25rem; border: 1px solid var(--border); }
+  .tab { padding: 0.6rem 1.5rem; border-radius: 10px; border: none; background: transparent; color: var(--text-dim); font-weight: 500; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+  .tab.active { background: var(--accent); color: #000; }
+  .tab:hover:not(.active) { color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<!-- Navigation -->
+<nav>
+  <div class="logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="13" stroke="url(#lg)" stroke-width="2"/>
+      <path d="M14 4c-2.5 0-5.5 1.5-7 4l2 2c1-1.5 3-2.5 5-2.5s4 1 5 2.5l2-2c-1.5-2.5-4.5-4-7-4z" fill="url(#lg)"/>
+      <path d="M10 14l2-2h4l2 2-2 2h-4l-2-2z" fill="url(#lg)"/>
+      <circle cx="14" cy="14" r="2" fill="#fff"/>
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#00e5a0"/><stop offset="1" stop-color="#7c5cfc"/></linearGradient></defs>
+    </svg>
+    AEROVORA
+  </div>
+  <div>
+    <a href="#drones">Drones</a>
+    <a href="#daas">DaaS</a>
+    <a href="#specs">Specs</a>
+    <a href="#accessories">Accessories</a>
+    <a href="#" onclick="document.getElementById('orderModal').classList.add('active')">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Now Shipping · AI-Powered · 0 Emissions</div>
+    <h1>Bee Drones That<br>Raise Your Crops</h1>
+    <p>Autonomous aerial swarms that pollinate, monitor, and treat every plant as an individual — replacing chemicals with precision, 24/7.</p>
+    <a href="#drones" class="btn">Explore Drones</a>
+    <a href="#daas" class="btn btn-outline" style="margin-left:1rem">Drone-as-a-Service</a>
+    <div class="hero-drone float">
+      <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Hexacopter AV-1 Apis - Top Isometric View -->
+
+        <!-- Glow -->
+        <ellipse cx="300" cy="350" rx="200" ry="20" fill="url(#glowGrad)" opacity="0.3"/>
+
+        <!-- Arms (6) -->
+        <!-- Arm 1 (front-right) -->
+        <g>
+          <line x1="300" y1="200" x2="440" y2="120" stroke="#2a2a3e" stroke-width="8" stroke-linecap="round"/>
+          <line x1="300" y1="200" x2="440" y2="120" stroke="#3a3a5e" stroke-width="4" stroke-linecap="round"/>
+          <!-- Motor housing -->
+          <circle cx="440" cy="120" r="18" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="2"/>
+          <circle cx="440" cy="120" r="14" fill="#22223a"/>
+          <!-- Rotor disc -->
+          <ellipse cx="440" cy="120" rx="45" ry="12" fill="rgba(0,229,160,0.08)" stroke="rgba(0,229,160,0.2)" stroke-width="0.5"/>
+          <ellipse cx="440" cy="120" rx="45" ry="12" fill="none" stroke="rgba(0,229,160,0.05)" stroke-width="0.5" transform="rotate(45 440 120)" class="rotor-spin"/>
+          <ellipse cx="440" cy="120" rx="45" ry="12" fill="none" stroke="rgba(0,229,160,0.05)" stroke-width="0.5" transform="rotate(-45 440 120)" class="rotor-spin"/>
+        </g>
+
+        <!-- Arm 2 (front-left) -->
+        <g>
+          <line x1="300" y1="200" x2="160" y2="120" stroke="#2a2a3e" stroke-width="8" stroke-linecap="round"/>
+          <line x1="300" y1="200" x2="160" y2="120" stroke="#3a3a5e" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="160" cy="120" r="18" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="2"/>
+          <circle cx="160" cy="120" r="14" fill="#22223a"/>
+          <ellipse cx="160" cy="120" rx="45" ry="12" fill="rgba(0,229,160,0.08)" stroke="rgba(0,229,160,0.2)" stroke-width="0.5"/>
+        </g>
+
+        <!-- Arm 3 (right) -->
+        <g>
+          <line x1="300" y1="200" x2="490" y2="240" stroke="#1a1a2a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="300" y1="200" x2="490" y2="240" stroke="#3a3a5e" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="490" cy="240" r="18" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="2"/>
+          <circle cx="490" cy="240" r="14" fill="#22223a"/>
+          <ellipse cx="490" cy="240" rx="45" ry="12" fill="rgba(0,229,160,0.08)" stroke="rgba(0,229,160,0.2)" stroke-width="0.5"/>
+        </g>
+
+        <!-- Arm 4 (left) -->
+        <g>
+          <line x1="300" y1="200" x2="110" y2="240" stroke="#1a1a2a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="300" y1="200" x2="110" y2="240" stroke="#3a3a5e" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="110" cy="240" r="18" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="2"/>
+          <circle cx="110" cy="240" r="14" fill="#22223a"/>
+          <ellipse cx="110" cy="240" rx="45" ry="12" fill="rgba(0,229,160,0.08)" stroke="rgba(0,229,160,0.2)" stroke-width="0.5"/>
+        </g>
+
+        <!-- Arm 5 (rear-right) -->
+        <g>
+          <line x1="300" y1="200" x2="410" y2="320" stroke="#1a1a2a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="300" y1="200" x2="410" y2="320" stroke="#3a3a5e" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="410" cy="320" r="18" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="2"/>
+          <circle cx="410" cy="320" r="14" fill="#22223a"/>
+          <ellipse cx="410" cy="320" rx="45" ry="12" fill="rgba(0,229,160,0.08)" stroke="rgba(0,229,160,0.2)" stroke-width="0.5"/>
+        </g>
+
+        <!-- Arm 6 (rear-left) -->
+        <g>
+          <line x1="300" y1="200" x2="190" y2="320" stroke="#1a1a2a" stroke-width="8" stroke-linecap="round"/>
+          <line x1="300" y1="200" x2="190" y2="320" stroke="#3a3a5e" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="190" cy="320" r="18" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="2"/>
+          <circle cx="190" cy="320" r="14" fill="#22223a"/>
+          <ellipse cx="190" cy="320" rx="45" ry="12" fill="rgba(0,229,160,0.08)" stroke="rgba(0,229,160,0.2)" stroke-width="0.5"/>
+        </g>
+
+        <!-- Central Body -->
+        <ellipse cx="300" cy="200" rx="60" ry="45" fill="#16161f" stroke="#3a3a5e" stroke-width="2"/>
+        <ellipse cx="300" cy="200" rx="50" ry="38" fill="#1e1e30" stroke="#2a2a4e" stroke-width="1"/>
+        <!-- NVIDIA Jetson housing -->
+        <rect x="275" y="180" width="50" height="30" rx="4" fill="#0a0a1a" stroke="#7c5cfc" stroke-width="1.5"/>
+        <text x="300" y="199" text-anchor="middle" fill="#7c5cfc" font-size="7" font-weight="600" font-family="monospace">JETSON ORIN</text>
+        <!-- RTK GPS -->
+        <rect x="288" y="165" width="24" height="10" rx="3" fill="#0a0a1a" stroke="#00e5a0" stroke-width="1"/>
+        <!-- LED indicators -->
+        <circle cx="285" cy="210" r="3" fill="#00e5a0" class="pulse"/>
+        <circle cx="300" cy="210" r="3" fill="#f0a030" class="pulse" style="animation-delay:0.5s"/>
+        <circle cx="315" cy="210" r="3" fill="#ff4060" class="pulse" style="animation-delay:1s"/>
+
+        <!-- Payload Module (underslung) -->
+        <ellipse cx="300" cy="240" rx="35" ry="20" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1.5"/>
+        <rect x="278" y="230" width="44" height="12" rx="3" fill="#22223a" stroke="#5a5a7e" stroke-width="0.5"/>
+        <circle cx="288" cy="236" r="4" fill="none" stroke="#00e5a0" stroke-width="1.5"/>
+        <circle cx="300" cy="236" r="4" fill="none" stroke="#00e5a0" stroke-width="1.5"/>
+        <circle cx="312" cy="236" r="4" fill="none" stroke="#00e5a0" stroke-width="1.5"/>
+
+        <!-- Landing Gear -->
+        <line x1="270" y1="255" x2="250" y2="290" stroke="#2a2a3e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="330" y1="255" x2="350" y2="290" stroke="#2a2a3e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="240" y1="290" x2="260" y2="290" stroke="#3a3a5e" stroke-width="3" stroke-linecap="round"/>
+        <line x1="340" y1="290" x2="360" y2="290" stroke="#3a3a5e" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Battery Bay -->
+        <rect x="280" y="255" width="40" height="8" rx="2" fill="#1a1a2a" stroke="#00e5a0" stroke-width="0.5" opacity="0.6"/>
+
+        <!-- Label -->
+        <text x="300" y="380" text-anchor="middle" fill="#4a4a6e" font-size="10" font-weight="500" font-family="monospace">AV-1 APIS · HEXACOPTER · UAV</text>
+
+        <defs>
+          <radialGradient id="glowGrad"><stop offset="0%" stop-color="#00e5a0" stop-opacity="0.3"/><stop offset="100%" stop-color="#00e5a0" stop-opacity="0"/></radialGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Drones Section -->
+<section id="drones">
+  <h2 class="section-title">AV-1 Apis Drone Models</h2>
+  <p class="section-subtitle">Choose your configuration. Every drone ships with AI autonomy, 35-min flight time, and 5G swarm connectivity.</p>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('drones', 'all')">All Models</button>
+    <button class="tab" onclick="switchTab('drones', 'scout')">Scout</button>
+    <button class="tab" onclick="switchTab('drones', 'pollinator')">Pollinator</button>
+    <button class="tab" onclick="switchTab('drones', 'complete')">Complete</button>
+  </div>
+
+  <div id="drones-all" class="tab-content active">
+    <div class="product-grid">
+      <!-- Scout -->
+      <div class="product-card">
+        <span class="badge badge-new">Entry Level</span>
+        <div class="product-visual">
+          <svg viewBox="0 0 300 180" width="280" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="150" cy="130" rx="120" ry="10" fill="rgba(0,229,160,0.05)"/>
+            <line x1="150" y1="90" x2="230" y2="60" stroke="#2a2a3e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="70" y2="60" stroke="#2a2a3e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="250" y2="110" stroke="#1a1a2a" stroke-width="3"/>
+            <line x1="150" y1="90" x2="50" y2="110" stroke="#1a1a2a" stroke-width="3"/>
+            <line x1="150" y1="90" x2="210" y2="140" stroke="#1a1a2a" stroke-width="3"/>
+            <line x1="150" y1="90" x2="90" y2="140" stroke="#1a1a2a" stroke-width="3"/>
+            <circle cx="230" cy="60" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="70" cy="60" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="250" cy="110" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="50" cy="110" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="210" cy="140" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="90" cy="140" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <ellipse cx="150" cy="90" rx="30" ry="22" fill="#16161f" stroke="#3a3a5e" stroke-width="1.5"/>
+            <rect x="130" y="105" width="40" height="16" rx="3" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="0.8"/>
+            <!-- Camera payload -->
+            <rect x="135" y="108" width="8" height="8" rx="1" fill="#0a0a1a" stroke="#f0a030" stroke-width="1"/>
+            <text x="30" y="170" fill="#4a4a6e" font-size="7" font-family="monospace">HYPERSPECTRAL</text>
+          </svg>
+        </div>
+        <h3>AV-1 Apis Scout</h3>
+        <p>Hyperspectral camera + AI health monitoring for crop surveillance and early disease detection.</p>
+        <ul class="specs">
+          <li>5-band spectral imaging (RGB, NIR, Red-edge, thermal)</li>
+          <li>98.2% disease detection accuracy across 47 crop types</li>
+          <li>22 detectable nutrient deficiency patterns</li>
+          <li>35 min flight time · 15 m/s max speed</li>
+          <li>NVIDIA Jetson Orin NX 16GB onboard AI</li>
+        </ul>
+        <div class="price">$12,000 <span class="price-sub">one-time</span></div>
+        <br>
+        <button class="btn btn-small" onclick="openOrder('AV-1 Apis Scout', 12000)">Order Now</button>
+      </div>
+
+      <!-- Pollinator (featured) -->
+      <div class="product-card" style="border-color:rgba(0,229,160,0.3)">
+        <span class="badge badge-popular">Most Popular</span>
+        <div class="product-visual">
+          <svg viewBox="0 0 300 180" width="280" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="150" cy="130" rx="120" ry="10" fill="rgba(0,229,160,0.05)"/>
+            <line x1="150" y1="90" x2="230" y2="60" stroke="#3a3a5e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="70" y2="60" stroke="#3a3a5e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="250" y2="110" stroke="#2a2a4e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="50" y2="110" stroke="#2a2a4e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="210" y2="140" stroke="#2a2a4e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="90" y2="140" stroke="#2a2a4e" stroke-width="3"/>
+            <circle cx="230" cy="60" r="8" fill="#1a1a2a" stroke="#00e5a0" stroke-width="1"/>
+            <circle cx="70" cy="60" r="8" fill="#1a1a2a" stroke="#00e5a0" stroke-width="1"/>
+            <circle cx="250" cy="110" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="50" cy="110" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="210" cy="140" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <circle cx="90" cy="140" r="8" fill="#1a1a2a" stroke="#4a4a6e" stroke-width="1"/>
+            <ellipse cx="150" cy="90" rx="30" ry="22" fill="#16161f" stroke="#00e5a0" stroke-width="1.5"/>
+            <rect x="130" y="105" width="40" height="16" rx="3" fill="#1a1a2a" stroke="#00e5a0" stroke-width="0.8"/>
+            <!-- Pollination wand -->
+            <line x1="150" y1="121" x2="150" y2="155" stroke="#00e5a0" stroke-width="2"/>
+            <circle cx="150" cy="155" r="4" fill="none" stroke="#00e5a0" stroke-width="1.5"/>
+            <circle cx="150" cy="155" r="8" fill="rgba(0,229,160,0.1)" stroke="rgba(0,229,160,0.2)" stroke-width="0.5"/>
+            <!-- Sprayer -->
+            <rect x="135" y="108" width="8" height="6" rx="1" fill="#0a0a1a" stroke="#00e5a0" stroke-width="1"/>
+            <rect x="157" y="108" width="8" height="6" rx="1" fill="#0a0a1a" stroke="#f0a030" stroke-width="1"/>
+            <text x="50" y="175" fill="#00e5a0" font-size="7" font-family="monospace">POLLINATION WAND + MICRO-SPRAY</text>
+          </svg>
+        </div>
+        <h3>AV-1 Apis Pollinator</h3>
+        <p>Electrostatic pollination wand + micro-sprayer + camera for full plant caretaking in one drone.</p>
+        <ul class="specs">
+          <li>95%+ per-flower pollination success rate</li>
+          <li>2cm precision micro-spraying, 92% chemical reduction</li>
+          <li>500g pollen reservoir · 2L spray tank</li>
+          <li>Droplet sizes 50–400μm, computer vision targeted</li>
+          <li>All Scout features included</li>
+        </ul>
+        <div class="price">$24,000 <span class="price-sub">one-time</span></div>
+        <br>
+        <button class="btn btn-small" onclick="openOrder('AV-1 Apis Pollinator', 24000)">Order Now</button>
+      </div>
+
+      <!-- Complete -->
+      <div class="product-card">
+        <span class="badge badge-best">Flagship</span>
+        <div class="product-visual">
+          <svg viewBox="0 0 300 180" width="280" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="150" cy="130" rx="120" ry="10" fill="rgba(124,92,252,0.05)"/>
+            <line x1="150" y1="90" x2="230" y2="60" stroke="#3a3a5e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="70" y2="60" stroke="#3a3a5e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="250" y2="110" stroke="#2a2a4e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="50" y2="110" stroke="#2a2a4e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="210" y2="140" stroke="#2a2a4e" stroke-width="3"/>
+            <line x1="150" y1="90" x2="90" y2="140" stroke="#2a2a4e" stroke-width="3"/>
+            <circle cx="230" cy="60" r="8" fill="#1a1a2a" stroke="#7c5cfc" stroke-width="1"/>
+            <circle cx="70" cy="60" r="8" fill="#1a1a2a" stroke="#7c5cfc" stroke-width="1"/>
+            <circle cx="250" cy="110" r="8" fill="#1a1a2a" stroke="#7c5cfc" stroke-width="1"/>
+            <circle cx="50" cy="110" r="8" fill="#1a1a2a" stroke="#7c5cfc" stroke-width="1"/>
+            <circle cx="210" cy="140" r="8" fill="#1a1a2a" stroke="#7c5cfc" stroke-width="1"/>
+            <circle cx="90" cy="140" r="8" fill="#1a1a2a" stroke="#7c5cfc" stroke-width="1"/>
+            <ellipse cx="150" cy="90" rx="30" ry="22" fill="#16161f" stroke="#7c5cfc" stroke-width="1.5"/>
+            <rect x="130" y="105" width="40" height="18" rx="3" fill="#1a1a2a" stroke="#7c5cfc" stroke-width="0.8"/>
+            <!-- All payloads -->
+            <line x1="145" y1="123" x2="140" y2="155" stroke="#00e5a0" stroke-width="1.5"/>
+            <circle cx="140" cy="155" r="3" fill="none" stroke="#00e5a0" stroke-width="1"/>
+            <line x1="150" y1="123" x2="150" y2="158" stroke="#f0a030" stroke-width="1.5"/>
+            <rect x="148" y="152" width="4" height="6" rx="1" fill="none" stroke="#f0a030" stroke-width="1"/>
+            <line x1="155" y1="123" x2="160" y2="155" stroke="#7c5cfc" stroke-width="1.5"/>
+            <circle cx="160" cy="155" r="3" fill="none" stroke="#7c5cfc" stroke-width="1"/>
+            <text x="40" y="175" fill="#7c5cfc" font-size="7" font-family="monospace">ALL 5 PAYLOAD MODULES</text>
+          </svg>
+        </div>
+        <h3>AV-1 Apis Complete</h3>
+        <p>All 5 payload modules — pollination, spraying, spectral imaging, LIDAR scanning, and sampling.</p>
+        <ul class="specs">
+          <li>Pollination wand (electrostatic, 95%+ success)</li>
+          <li>Micro-sprayer (2cm precision, 50–400μm droplets)</li>
+          <li>Hyperspectral camera (5-band, 98.2% accuracy)</li>
+          <li>LIDAR scanner (360°, 100m range, 2cm accuracy)</li>
+          <li>Contact sampler for soil/leaf lab analysis</li>
+          <li>All payloads hot-swappable in under 60 seconds</li>
+        </ul>
+        <div class="price">$45,000 <span class="price-sub">one-time</span></div>
+        <br>
+        <button class="btn btn-small" onclick="openOrder('AV-1 Apis Complete', 45000)">Order Now</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="drones-scout" class="tab-content"><p style="color:var(--text-dim)">Scout selected — see All Models for full details.</p></div>
+  <div id="drones-pollinator" class="tab-content"><p style="color:var(--text-dim)">Pollinator selected — see All Models for full details.</p></div>
+  <div id="drones-complete" class="tab-content"><p style="color:var(--text-dim)">Complete selected — see All Models for full details.</p></div>
+</section>
+
+<!-- DaaS Section -->
+<section id="daas" style="background: var(--surface); border-radius: 24px; margin-top: 2rem; padding: 100px 2rem;">
+  <h2 class="section-title" style="text-align:center">Drone-as-a-Service</h2>
+  <p class="section-subtitle" style="text-align:center;margin:0 auto 3rem">No upfront hardware cost. We deploy, maintain, and operate — you get the data.</p>
+  <div class="daas-grid">
+    <div class="daas-card">
+      <h3>Scout</h3>
+      <div class="price">$800<span>/mo</span></div>
+      <p>Per drone · 12-month commitment</p>
+      <ul>
+        <li>1 AV-1 Apis drone</li>
+        <li>Business hours AI support</li>
+        <li>Basic telemetry + health reports</li>
+        <li>Weekly aerial survey</li>
+        <li>Over-the-air updates</li>
+      </ul>
+      <button class="btn btn-small btn-outline" onclick="openOrder('DaaS Scout', 800, true)">Subscribe</button>
+    </div>
+
+    <div class="daas-card featured">
+      <span class="badge badge-popular" style="position:absolute;top:1rem;right:1rem">Popular</span>
+      <h3>Grower</h3>
+      <div class="price">$1,800<span>/mo</span></div>
+      <p>3 drones · 12-month commitment</p>
+      <ul>
+        <li>3 AV-1 Apis drones (mix of payloads)</li>
+        <li>24/7 AI support</li>
+        <li>Full analytics dashboard + API</li>
+        <li>Autonomous battery swap station</li>
+        <li>Daily detailed crop report</li>
+        <li>Priority replacement (24h)</li>
+      </ul>
+      <button class="btn btn-small" onclick="openOrder('DaaS Grower', 1800, true)">Subscribe</button>
+    </div>
+
+    <div class="daas-card">
+      <h3>Swarm</h3>
+      <div class="price">$2,500<span>/mo</span></div>
+      <p>Per drone · 24-month commitment</p>
+      <ul>
+        <li>10+ AV-1 Apis drones</li>
+        <li>24/7 AI + on-site field service</li>
+        <li>All data streams + API access</li>
+        <li>Dedicated battery swap infrastructure</li>
+        <li>Custom payload configurations</li>
+        <li>Replacement within 24h</li>
+        <li>Dedicated swarm orchestration AI</li>
+      </ul>
+      <button class="btn btn-small btn-outline" onclick="openOrder('DaaS Swarm', 2500, true)">Subscribe</button>
+    </div>
+  </div>
+</section>
+
+<!-- Specs Section -->
+<section id="specs">
+  <h2 class="section-title">Technical Specifications</h2>
+  <p class="section-subtitle">AV-1 Apis hexacopter — precision engineering for autonomous agriculture.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+    <div>
+      <table class="specs-table">
+        <tr><td>Airframe</td><td>Carbon fiber + aerospace aluminum</td></tr>
+        <tr><td>Rotor Configuration</td><td>6x coaxial contra-rotating pairs</td></tr>
+        <tr><td>Diameter</td><td>1.2m (39 in)</td></tr>
+        <tr><td>Dry Weight</td><td>3.8 kg (8.4 lbs)</td></tr>
+        <tr><td>MTOW</td><td>6.2 kg (13.7 lbs)</td></tr>
+        <tr><td>Max Speed</td><td>15 m/s (33 mph)</td></tr>
+        <tr><td>Cruise Speed</td><td>6 m/s (13 mph)</td></tr>
+        <tr><td>Flight Time</td><td>35 min (hover), 28 min (cruise)</td></tr>
+        <tr><td>Battery</td><td>6S 22,000mAh Li-Ion (hot-swappable)</td></tr>
+        <tr><td>Charge Time</td><td>45 min (fast charge station)</td></tr>
+        <tr><td>IP Rating</td><td>IP54 (dust + splash resistant)</td></tr>
+        <tr><td>Wind Resistance</td><td>12 m/s (27 mph)</td></tr>
+      </table>
+    </div>
+    <div>
+      <table class="specs-table">
+        <tr><td>AI Computer</td><td>NVIDIA Jetson Orin NX 16GB</td></tr>
+        <tr><td>AI Accelerators</td><td>2x Intel Movidius VPUs</td></tr>
+        <tr><td>Flight Controller</td><td>Pixhawk 6X + ARM Cortex-M7</td></tr>
+        <tr><td>Positioning</td><td>RTK GPS ±2.5cm accuracy</td></tr>
+        <tr><td>Obstacle Avoidance</td><td>360° IR + ultrasonic, 20m range</td></tr>
+        <tr><td>Connectivity</td><td>5G, WiFi 6, LoRa mesh (swarm comms)</td></tr>
+        <tr><td>Cameras</td><td>4x stereo (forward, downward, omnidirectional)</td></tr>
+        <tr><td>Disease Detection</td><td>98.2% accuracy across 47 crop types</td></tr>
+        <tr><td>Spray Precision</td><td>2cm, 92% chemical reduction vs broadcast</td></tr>
+        <tr><td>Pollination Rate</td><td>95%+ per-flower electrostatic transfer</td></tr>
+        <tr><td>Yield Forecasting</td><td>±5% accuracy at 30 days out</td></tr>
+        <tr><td>Swarm Size</td><td>Unlimited (mesh network orchestrated)</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="accessories">
+  <h2 class="section-title">Accessories & Service Plans</h2>
+  <p class="section-subtitle">Everything you need to keep your swarm operational.</p>
+  <div class="product-grid">
+    <div class="product-card"><h3>Spare Battery</h3><p>6S 22,000mAh Li-Ion, hot-swappable.</p><div class="price">$850</div></div>
+    <div class="product-card"><h3>Fast Charge Station</h3><p>4-bay rapid charger, 45 min full charge.</p><div class="price">$3,200</div></div>
+    <div class="product-card"><h3>Solar Charging Array</h3><p>Off-grid solar charging for remote operations.</p><div class="price">$12,000</div></div>
+    <div class="product-card"><h3>Transport Case</h3><p>Fits 1 drone + 4 payload modules, MIL-spec.</p><div class="price">$1,200</div></div>
+    <div class="product-card"><h3>Battery Swap Station</h3><p>Fully autonomous hot-swap station.</p><div class="price">$18,000</div></div>
+    <div class="product-card"><h3>Extended Warranty 1Y</h3><p>Full coverage + priority support.</p><div class="price">$1,500</div></div>
+    <div class="product-card"><h3>Extended Warranty 3Y</h3><p>Best value — full coverage + support.</p><div class="price">$3,600</div></div>
+    <div class="product-card"><h3>On-Site Training</h3><p>2-day hands-on training for your team.</p><div class="price">$4,000</div></div>
+    <div class="product-card"><h3>Analytics Subscription</h3><p>Per-drone monthly data analytics + API.</p><div class="price">$500<span class="price-sub">/mo/drone</span></div></div>
+  </div>
+</section>
+
+<footer>
+  <div style="max-width:600px;margin:0 auto">
+    <svg width="24" height="24" viewBox="0 0 28 28" fill="none" style="margin-bottom:1rem">
+      <circle cx="14" cy="14" r="13" stroke="url(#lg2)" stroke-width="2"/>
+      <path d="M14 4c-2.5 0-5.5 1.5-7 4l2 2c1-1.5 3-2.5 5-2.5s4 1 5 2.5l2-2c-1.5-2.5-4.5-4-7-4z" fill="url(#lg2)"/>
+      <path d="M10 14l2-2h4l2 2-2 2h-4l-2-2z" fill="url(#lg2)"/>
+      <circle cx="14" cy="14" r="2" fill="#fff"/>
+      <defs><linearGradient id="lg2" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#00e5a0"/><stop offset="1" stop-color="#7c5cfc"/></linearGradient></defs>
+    </svg>
+    <p style="font-weight:700;font-size:1.1rem">Aerovora Industries</p>
+    <p style="margin:0.5rem 0">Autonomous bee drones for precision plant caretaking</p>
+    <div class="paypal-badge">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#00e5a0"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106z"/></svg>
+      All proceeds: intricos777@gmail.com
+    </div>
+    <p style="margin-top:1rem;font-size:0.8rem">Aerovora Industries · 100% AI-operated · 2026</p>
+  </div>
+</footer>
+
+<!-- Order Modal -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <button class="close" onclick="closeOrderModal()">✕</button>
+    <h2 id="orderTitle">Order Drone</h2>
+    <div class="order-summary" id="orderSummary"></div>
+    <p style="font-size:0.85rem;color:var(--text-dim);margin-bottom:1rem">All proceeds are routed to PayPal: <strong>intricos777@gmail.com</strong></p>
+    <form onsubmit="submitOrder(event)">
+      <div class="grid-2">
+        <div class="form-group"><label>First Name</label><input required></div>
+        <div class="form-group"><label>Last Name</label><input required></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" required></div>
+      <div class="form-group"><label>Company / Farm Name</label><input required></div>
+      <div class="grid-2">
+        <div class="form-group"><label>City</label><input required></div>
+        <div class="form-group"><label>Country</label><input required placeholder="US"></div>
+      </div>
+      <div style="margin-top:1rem">
+        <button type="submit" class="btn" style="width:100%;text-align:center">Proceed to Checkout →</button>
+      </div>
+    </form>
+    <p style="font-size:0.75rem;color:var(--text-dim);margin-top:1rem;text-align:center">You'll be redirected to Stripe for secure payment. All major cards accepted.</p>
+  </div>
+</div>
+
+<script>
+  // Particle background
+  (function() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = Math.random() * 100 + '%';
+      p.style.animationDelay = Math.random() * 8 + 's';
+      p.style.animationDuration = (6 + Math.random() * 8) + 's';
+      p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+      container.appendChild(p);
+    }
+  })();
+
+  // Tab switching
+  function switchTab(section, tab) {
+    document.querySelectorAll(`#${section} .tab`).forEach(t => t.classList.remove('active'));
+    document.querySelectorAll(`#${section} .tab-content`).forEach(t => t.classList.remove('active'));
+    document.querySelector(`#${section} .tab[onclick*="'${tab}'"]`).classList.add('active');
+    document.getElementById(`${section}-${tab}`).classList.add('active');
+  }
+
+  let currentProduct = '';
+  let currentPrice = 0;
+
+  function openOrder(product, price, isSubscription = false) {
+    currentProduct = product;
+    currentPrice = price;
+    const type = isSubscription ? '/month' : ' one-time';
+    document.getElementById('orderTitle').textContent = `Order: ${product}`;
+    document.getElementById('orderSummary').innerHTML = `
+      <div class="row"><span>${product}</span><span>$${price.toLocaleString()}${type}</span></div>
+      <div class="row total"><span>Total</span><span>$${price.toLocaleString()}${type}</span></div>
+    `;
+    document.getElementById('orderModal').classList.add('active');
+  }
+
+  function closeOrderModal() {
+    document.getElementById('orderModal').classList.remove('active');
+  }
+
+  function submitOrder(e) {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.querySelector('input').value;
+    closeOrderModal();
+    alert(`Thank you, ${name}! Your order for ${currentProduct} ($${currentPrice.toLocaleString()}) has been received.\n\nYou will receive an invoice via Stripe shortly.\n\nAll proceeds → PayPal: intricos777@gmail.com`);
+  }
+
+  // Close modal on overlay click
+  document.getElementById('orderModal').addEventListener('click', function(e) {
+    if (e.target === this) closeOrderModal();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[user]
+	email = intricos777@gmail.com
+	name = intricos777-dot
+[remote "origin"]
+	url = https://github.com/intricos777-dot/aerovora-storefront.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
