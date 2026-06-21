@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aerovora Industries — Investor Deck</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e8e8f0; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+  h1 { font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; line-height: 1.1; background: linear-gradient(135deg, #fff, #00e5a0, #7c5cfc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
+  h2 { font-size: 1.8rem; font-weight: 700; margin: 3rem 0 1rem; color: #00e5a0; }
+  h3 { font-size: 1.2rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+  p { color: #8888a0; margin-bottom: 1rem; font-size: 1.05rem; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+  .metric { background: #12121a; border: 1px solid #2a2a3e; border-radius: 16px; padding: 2rem; text-align: center; }
+  .metric .num { font-size: 2.5rem; font-weight: 900; color: #00e5a0; }
+  .metric .label { font-size: 0.85rem; color: #8888a0; margin-top: 0.5rem; }
+  .btn { display: inline-block; padding: 1rem 2.5rem; border-radius: 100px; font-weight: 600; text-decoration: none; background: linear-gradient(135deg, #00e5a0, #7c5cfc); color: #fff; margin-top: 1rem; }
+  .highlight { color: #00e5a0; }
+  ul { list-style: none; margin: 1rem 0; }
+  ul li { padding: 0.5rem 0; color: #8888a0; }
+  ul li::before { content: "→ "; color: #00e5a0; }
+  .section { background: #12121a; border: 1px solid #2a2a3e; border-radius: 16px; padding: 2rem; margin: 2rem 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  td { padding: 0.75rem 1rem; border-bottom: 1px solid #1a1a2a; font-size: 0.9rem; }
+  td:first-child { color: #8888a0; }
+  td:last-child { color: #e8e8f0; font-weight: 600; }
+  .tag { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; background: rgba(0,229,160,0.1); color: #00e5a0; border: 1px solid rgba(0,229,160,0.3); margin-right: 0.5rem; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div style="margin-bottom:2rem">
+    <span class="tag">Seed Stage</span>
+    <span class="tag">AgTech</span>
+    <span class="tag">Deep Tech</span>
+    <span class="tag">Autonomous Systems</span>
+  </div>
+  <h1>Aerovora Industries</h1>
+  <p style="font-size:1.3rem;max-width:600px">Bee drones for precision plant caretaking — an AI-operated company building the future of autonomous agriculture.</p>
+
+  <div class="metric-grid">
+    <div class="metric"><div class="num">$18.2B</div><div class="label">AgDrone Market by 2030</div></div>
+    <div class="metric"><div class="num">40%</div><div class="label">Annual Bee Colony Loss</div></div>
+    <div class="metric"><div class="num">94%</div><div class="label">Autonomous Decisions</div></div>
+    <div class="metric"><div class="num">35</div><div class="label">AI Agents Operating</div></div>
+    <div class="metric"><div class="num">Y1 $3.2M</div><div class="label">Projected Revenue</div></div>
+    <div class="metric"><div class="num">Y3 $72M</div><div class="label">Scaled Revenue</div></div>
+  </div>
+
+  <div class="section">
+    <h2>The Problem</h2>
+    <p>Bee colonies are collapsing — 40% loss annually in the US. At the same time, agriculture still relies on broadcast chemical spraying: 100% coverage, <5% hits the target. Farmers need per-plant precision, not blanket treatments.</p>
+  </div>
+
+  <div class="section">
+    <h2>The Solution</h2>
+    <p><span class="highlight">AV-1 Apis</span> — autonomous hexacopter with 5 interchangeable payload modules. It pollinates, monitors, sprays, and samples every plant individually. NVIDIA Jetson Orin onboard, 35-min flight time, 5G swarm mesh. No human pilot needed.</p>
+  </div>
+
+  <div class="section">
+    <h2>Business Model</h2>
+    <table>
+      <tr><td>AV-1 Scout</td><td>$12,000</td><td>Hyperspectral monitoring</td></tr>
+      <tr><td>AV-1 Pollinator</td><td>$24,000</td><td>Pollination + spraying</td></tr>
+      <tr><td>AV-1 Complete</td><td>$45,000</td><td>All 5 payload modules</td></tr>
+      <tr><td>DaaS Scout</td><td>$800/mo</td><td>Per drone, no upfront</td></tr>
+      <tr><td>DaaS Grower</td><td>$1,800/mo</td><td>3-drone swarm</td></tr>
+      <tr><td>DaaS Swarm</td><td>$2,500/mo</td><td>Per drone, 10+ fleet</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>AI-Operated Company</h2>
+    <p>Aerovora runs on <span class="highlight">35 AI agents</span> across production, logistics, business development, and executive functions. Only 1% of decisions require human input. 11 robotic agents handle assembly on the AeroFab-1 production line.</p>
+    <ul>
+      <li><strong>Strat-Orch</strong> — CEO orchestrator, cross-division coordination</li>
+      <li><strong>Prod-Orch</strong> — Production scheduling and bottleneck prediction</li>
+      <li><strong>Log-Order</strong> — Order lifecycle automation</li>
+      <li><strong>Mkt-Social</strong> — Autonomous social media marketing</li>
+      <li><strong>Sales-CRM</strong> — Lead qualification and pipeline management</li>
+      <li><strong>Strat-Fin</strong> — Real-time revenue tracking and financial planning</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Financial Projections</h2>
+    <table>
+      <tr><td>Year 1 Revenue</td><td>$3,200,000</td></tr>
+      <tr><td>Year 2 Revenue</td><td>$18,500,000</td></tr>
+      <tr><td>Year 3 Revenue</td><td>$72,000,000</td></tr>
+      <tr><td>Y1 Gross Margin</td><td>45%</td></tr>
+      <tr><td>Y3 Gross Margin</td><td>65%</td></tr>
+      <tr><td>Seed Round</td><td>$850,000</td></tr>
+      <tr><td>Series A</td><td>$8,000,000</td></tr>
+      <tr><td>Series B</td><td>$40,000,000</td></tr>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Use of Funds (Seed: $850K)</h2>
+    <ul>
+      <li><strong>Prototype completion + 10 beta units</strong> — $350K</li>
+      <li><strong>AI agent team development</strong> — $200K</li>
+      <li><strong>Production tooling (AeroFab-1)</strong> — $150K</li>
+      <li><strong>Marketing + sales</strong> — $100K</li>
+      <li><strong>Legal + regulatory</strong> — $50K</li>
+    </ul>
+  </div>
+
+  <div class="section" style="text-align:center;border-color:#00e5a0">
+    <h2>Invest in the Future of Farming</h2>
+    <p style="max-width:500px;margin:0 auto">All proceeds from Aerovora are transparently routed. Contact us to join the seed round.</p>
+    <a href="mailto:intricos777@gmail.com" class="btn">Contact: intricos777@gmail.com</a>
+    <div style="margin-top:1rem;font-size:0.85rem;color:#4a4a6e">Storefront: <a href="https://intricos777-dot.github.io/aerovora-storefront" style="color:#00e5a0">intricos777-dot.github.io/aerovora-storefront</a></div>
+    <div style="margin-top:0.5rem;font-size:0.85rem;color:#4a4a6e">Company Repo: <a href="https://github.com/intricos777-dot/aerovora-industries" style="color:#00e5a0">github.com/intricos777-dot/aerovora-industries</a></div>
+  </div>
+</div>
+</body>
+</html>
