@@ -1,0 +1,78 @@
+{
+  "company": {
+    "name": "Aerovora Industries",
+    "legal_structure": "C-Corporation (Delaware)",
+    "founded": "2026",
+    "website": "aerovora.com",
+    "description": "Bee drone manufacturer for precision plant caretaking",
+    "ceo": "Strat-Orch (Orchestrator AI Agent)",
+    "employees": {
+      "ai_agents": 24,
+      "robotic_agents": 11,
+      "human_oversight": 1
+    }
+  },
+  "supply_chain": {
+    "suppliers": [
+      {"name": "T-Motor", "country": "CN", "lead_time_days": 14, "components": ["motors"]},
+      {"name": "DragonPlate", "country": "US", "lead_time_days": 21, "components": ["carbon_fiber_arms"]},
+      {"name": "NVIDIA", "country": "US", "lead_time_days": 30, "components": ["jetson_orin"]},
+      {"name": "LiPoKing", "country": "KR", "lead_time_days": 18, "components": ["batteries"]},
+      {"name": "Sony Semi", "country": "JP", "lead_time_days": 28, "components": ["cameras"]},
+      {"name": "McMaster-Carr", "country": "US", "lead_time_days": 3, "components": ["fasteners_hardware"]}
+    ],
+    "receiving_bays": 4,
+    "shipping_bays": 6,
+    "asrs_capacity": 15000,
+    "finished_goods_capacity": 2000
+  },
+  "production": {
+    "facility": "AeroFab-1",
+    "stations": 6,
+    "robots_on_line": 7,
+    "cycle_time_minutes": 18,
+    "units_per_shift": 18,
+    "shifts_per_day": 2,
+    "cost_per_unit_year1": 6200,
+    "cost_per_unit_year3": 3800,
+    "target_oee": 0.78
+  },
+  "drone": {
+    "model": "AV-1 Apis",
+    "type": "Hexacopter",
+    "mtow_kg": 6.2,
+    "flight_time_min": 35,
+    "cruise_speed_ms": 6,
+    "ai_computer": "NVIDIA Jetson Orin NX 16GB",
+    "payload_modules": ["pollination_wand", "micro_sprayer", "hyperspectral_camera", "lidar", "sampler"]
+  },
+  "ai_agents": {
+    "executive": ["Strat-Orch", "Strat-Fin", "Strat-Biz"],
+    "production": ["Prod-Orch", "Prod-QA", "Prod-Maint", "Prod-Log"],
+    "logistics": ["Log-Order", "Log-Arrival", "Log-Inventory", "Log-Dispatch", "Log-Fleet"],
+    "business": ["Mkt-Social", "Mkt-Email", "Mkt-Ads", "Sales-CRM", "Sales-Outreach", "Supp-Ticket", "Supp-Field", "Res-Comp"]
+  },
+  "robotic_agents": {
+    "assembly": ["AV-1-01", "AV-1-02", "AV-1-03", "AV-1-04", "AV-1-05", "AV-1-06"],
+    "packaging": ["AV-1-07"],
+    "material_handling": ["RFL-01", "RFL-02"]
+  },
+  "financials": {
+    "revenue_year1": 3200000,
+    "revenue_year2": 18500000,
+    "revenue_year3": 72000000,
+    "gross_margin_year1": 0.45,
+    "gross_margin_year2": 0.58,
+    "gross_margin_year3": 0.65,
+    "seed_round": 850000,
+    "series_a": 8000000,
+    "series_b": 40000000
+  },
+  "operations": {
+    "cycle_hours": 24,
+    "days_per_week": 6,
+    "maintenance_window": "Sunday 00:00-24:00",
+    "decision_autonomy_pct": 94,
+    "human_escalation_pct": 1
+  }
+}

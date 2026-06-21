@@ -1,0 +1,20 @@
+{
+  "integrations": {
+    "payment_processors": {
+      "stripe": {
+        "enabled": true,
+        "payout_schedule": "daily",
+        "statement_descriptor": "AEROVORA*",
+        "webhook_events": ["payment_intent.succeeded", "invoice.paid", "subscription.created"]
+      },
+      "paypal": {
+        "enabled": true,
+        "email": "intricos777@gmail.com",
+        "type": "business",
+        "payout_priority": 1,
+        "allocation_pct": 100,
+        "auto_sweep": true
+      }
+    }
+  }
+}
