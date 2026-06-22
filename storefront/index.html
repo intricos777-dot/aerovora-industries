@@ -410,7 +410,7 @@
         </ul>
         <div class="price">$12,000 <span class="price-sub">one-time</span></div>
         <br>
-        <button class="btn btn-small" onclick="openOrder('AV-1 Apis Scout', 12000)">Order Now</button>
+                <button class="btn btn-small" onclick="openOrder('AV-1 Apis Scout', 12000)">Order Now</button>
       </div>
 
       <!-- Pollinator (featured) -->
@@ -663,6 +663,7 @@
   </div>
 </div>
 
+<script src="https://js.stripe.com/v3/"></script>
 <script>
   // Particle background
   (function() {
@@ -686,12 +687,31 @@
     document.getElementById(`${section}-${tab}`).classList.add('active');
   }
 
+  // ── Stripe Configuration ──
+  // After creating products in Stripe, paste your Price IDs below.
+  // Get them from: https://dashboard.stripe.com/products
+  // Example: "price_1ABCDEFGHIJKLMNOPQRSTUVWX"
+  const STRIPE_CONFIG = {
+    publicKey: "pk_test_51TkwPEAF5qKRqiGo8GJ375a6jeQiptSPlxDIQfYCUMbDmeNr09xofutbyjX0RiDXxdmvx4x5uEX5UNsVBKcifQcp00BifaCCeb",
+    prices: {
+      scout: "price_1TkwfeAF5qKRqiGoQ7kRzUvv",
+      pollinator: "price_1TkwffAF5qKRqiGoYpFNyE4K",
+      complete: "price_1TkwfgAF5qKRqiGoAdSGnImi",
+      daas_scout: "price_1TkwfiAF5qKRqiGorNmHWTOP",
+      daas_grower: "price_1TkwfjAF5qKRqiGoLjcHdZsR",
+      daas_swarm: "price_1TkwfkAF5qKRqiGo1YpXvITW",
+    }
+  };
+
+  // ── Order Modal ──
   let currentProduct = '';
   let currentPrice = 0;
+  let currentIsSubscription = false;
 
   function openOrder(product, price, isSubscription = false) {
     currentProduct = product;
     currentPrice = price;
+    currentIsSubscription = isSubscription;
     const type = isSubscription ? '/month' : ' one-time';
     document.getElementById('orderTitle').textContent = `Order: ${product}`;
     document.getElementById('orderSummary').innerHTML = `
@@ -705,12 +725,51 @@
     document.getElementById('orderModal').classList.remove('active');
   }
 
-  function submitOrder(e) {
+  async function submitOrder(e) {
     e.preventDefault();
     const form = e.target;
     const name = form.querySelector('input').value;
+    const email = form.querySelector('input[type="email"]').value;
+
+    // If Stripe is configured, redirect to Checkout
+    if (STRIPE_CONFIG.publicKey) {
+      closeOrderModal();
+      try {
+        const stripe = Stripe(STRIPE_CONFIG.publicKey);
+        const priceId = getPriceId(currentProduct);
+        if (priceId) {
+          const { error } = await stripe.redirectToCheckout({
+            lineItems: [{ price: priceId, quantity: 1 }],
+            mode: currentIsSubscription ? 'subscription' : 'payment',
+            successUrl: window.location.origin + '/?success=true',
+            cancelUrl: window.location.origin + '/?canceled=true',
+            customerEmail: email,
+          });
+          if (error) alert('Stripe error: ' + error.message);
+        } else {
+          alert('Stripe price not configured for this product.\n\nOrder received! We\'ll contact you at ' + email);
+        }
+      } catch(e) {
+        alert('Checkout error. We\'ll contact you at ' + email);
+      }
+      return;
+    }
+
+    // Fallback: collect order info
     closeOrderModal();
-    alert(`Thank you, ${name}! Your order for ${currentProduct} ($${currentPrice.toLocaleString()}) has been received.\n\nYou will receive an invoice via Stripe shortly.\n\nAll proceeds → PayPal: intricos777@gmail.com`);
+    alert(`Thank you, ${name}! Your order for ${currentProduct} ($${currentPrice.toLocaleString()}) has been received.\n\nWe'll contact you at ${email} with payment instructions.\n\nAll proceeds → PayPal: intricos777@gmail.com`);
+  }
+
+  function getPriceId(product) {
+    const map = {
+      'AV-1 Apis Scout': STRIPE_CONFIG.prices.scout,
+      'AV-1 Apis Pollinator': STRIPE_CONFIG.prices.pollinator,
+      'AV-1 Apis Complete': STRIPE_CONFIG.prices.complete,
+      'DaaS Scout': STRIPE_CONFIG.prices.daas_scout,
+      'DaaS Grower': STRIPE_CONFIG.prices.daas_grower,
+      'DaaS Swarm': STRIPE_CONFIG.prices.daas_swarm,
+    };
+    return map[product] || null;
   }
 
   // Close modal on overlay click
