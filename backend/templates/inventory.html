@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory — Aerovora Industries</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e0e0e0; }
+        .header { background: #12121a; border-bottom: 1px solid #1e1e2e; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .header h1 { font-size: 20px; } .header h1 span { color: #f59e0b; }
+        .header .nav a { color: #888; text-decoration: none; margin-left: 24px; font-size: 14px; }
+        .header .nav a:hover { color: #f59e0b; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+        table { width: 100%; border-collapse: collapse; background: #14141f; border: 1px solid #1e1e2e; border-radius: 12px; overflow: hidden; }
+        th { text-align: left; padding: 12px 16px; font-size: 12px; color: #666; text-transform: uppercase; border-bottom: 1px solid #1e1e2e; }
+        td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #1a1a2a; }
+        .low { color: #ef4444; font-weight: 600; }
+        .ok { color: #22c55e; }
+        .warn { color: #f59e0b; }
+        .btn-sm { background: #1e1e2e; color: #ccc; padding: 4px 10px; border-radius: 4px; border: 1px solid #333; font-size: 11px; cursor: pointer; }
+        .btn-sm:hover { background: #2a2a3e; }
+        .btn { background: #f59e0b; color: #000; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+        form { display: inline; }
+        input { background: #1a1a2a; color: #e0e0e0; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; font-size: 13px; width: 60px; }
+        .modal-bg { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000080; }
+        .modal { background:#14141f; border:1px solid #1e1e2e; border-radius:12px; padding:24px; max-width:400px; margin:10% auto; }
+        .modal h3 { margin-bottom:16px; }
+        .modal input[type=text], .modal input[type=number] { width:100%; margin-bottom:12px; padding:8px; background:#1a1a2a; border:1px solid #333; border-radius:6px; color:#e0e0e0; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Aerovora <span>Industries</span> — Inventory</h1>
+    <div class="nav">
+        <a href="/">Dashboard</a>
+        <a href="/orders">Orders</a>
+        <a href="/production">Production</a>
+        <a href="/inventory">Inventory</a>
+    </div>
+</div>
+<div class="container">
+    <div style="margin-bottom:16px;display:flex;gap:8px">
+        <button class="btn" onclick="document.getElementById('po-modal').style.display='block'">+ New PO</button>
+        <button class="btn" onclick="document.getElementById('receive-modal').style.display='block'">+ Receive Stock</button>
+    </div>
+    <table>
+        <tr>
+            <th>Component</th><th>Supplier</th><th>SKU</th><th>Qty</th><th>Min</th><th>Status</th><th>Cost</th><th>Lead Time</th>
+        </tr>
+        {% for i in items %}
+        <tr>
+            <td>{{ i.component }}</td>
+            <td style="font-size:13px;color:#888">{{ i.supplier }}</td>
+            <td style="font-family:monospace;font-size:13px">{{ i.sku }}</td>
+            <td class="{% if i.status == 'low' %}low{% elif i.status == 'warn' %}warn{% else %}ok{% endif %}">{{ i.quantity }}</td>
+            <td style="color:#666;font-size:13px">{{ i.min_stock }}</td>
+            <td>{% if i.quantity <= i.min_stock %}<span class="low">LOW</span>{% elif i.quantity <= i.min_stock * 2 %}<span class="warn">REORDER</span>{% else %}<span class="ok">OK</span>{% endif %}</td>
+            <td style="font-size:13px">{{ i.unit_cost or 'N/A' }}</td>
+            <td style="font-size:13px;color:#888">{{ i.lead_time_days or '—' }}d</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" style="text-align:center;color:#666;padding:32px">No inventory items</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div id="po-modal" class="modal-bg" onclick="if(event.target==this)this.style.display='none'">
+    <div class="modal">
+        <h3>Create Purchase Order</h3>
+        <form action="/api/suppliers/order" method="post" onsubmit="event.target.action='/api/suppliers/order'">
+            <input type="text" name="supplier" placeholder="Supplier name" required>
+            <input type="text" name="component" placeholder="Component name" required>
+            <input type="number" name="quantity" placeholder="Quantity" min="1" required>
+            <button class="btn" type="submit">Create PO</button>
+        </form>
+    </div>
+</div>
+
+<div id="receive-modal" class="modal-bg" onclick="if(event.target==this)this.style.display='none'">
+    <div class="modal">
+        <h3>Receive Stock</h3>
+        <form action="/api/inventory/receive" method="post">
+            <input type="text" name="sku" placeholder="SKU (e.g., MTR-4014)" required>
+            <input type="number" name="quantity" placeholder="Quantity received" min="1" required>
+            <button class="btn" type="submit">Receive</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

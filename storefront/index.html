@@ -241,6 +241,7 @@
     <a href="#daas">DaaS</a>
     <a href="#specs">Specs</a>
     <a href="#accessories">Accessories</a>
+    <a href="http://sin-asustufdashf15fx517zcfx517zc:8777" target="_blank">Ops</a>
     <a href="#" onclick="document.getElementById('orderModal').classList.add('active')">Contact</a>
   </div>
 </nav>
@@ -617,6 +618,60 @@
     <div class="product-card"><h3>Analytics Subscription</h3><p>Per-drone monthly data analytics + API.</p><div class="price">$500<span class="price-sub">/mo/drone</span></div></div>
   </div>
 </section>
+
+<!-- ── Track Order ── -->
+<section style="padding:4rem 2rem;border-top:1px solid var(--border);background:var(--surface);text-align:center">
+  <h2 style="margin-bottom:0.5rem;font-size:1.5rem">Track Your Order</h2>
+  <p style="color:var(--text-dim);margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto">
+    Enter your order number to see production status and tracking info.
+  </p>
+  <div style="display:flex;gap:8px;max-width:450px;margin:0 auto;flex-wrap:wrap;justify-content:center">
+    <input type="text" id="trackOrderInput" placeholder="e.g. AV-20260623-0001" style="flex:1;min-width:200px;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1rem">
+    <button onclick="trackOrder()" style="padding:12px 24px;background:var(--accent);color:#000;border:none;border-radius:8px;font-weight:600;cursor:pointer">Track</button>
+  </div>
+  <div id="trackResult" style="margin-top:1.5rem;text-align:left;max-width:500px;margin-left:auto;margin-right:auto;display:none;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:1.5rem"></div>
+</section>
+
+<script>
+async function trackOrder() {
+  const input = document.getElementById('trackOrderInput');
+  const result = document.getElementById('trackResult');
+  const orderNum = input.value.trim();
+  if (!orderNum) return;
+
+  result.style.display = 'block';
+  result.innerHTML = '<p style="color:var(--text-dim)">Looking up order...</p>';
+
+  try {
+    // Try the local API first, then fall back to order number display
+    const resp = await fetch('http://sin-asustufdashf15fx517zcfx517zc:8777/api/orders');
+    const orders = await resp.json();
+    const order = orders.find(o => o.order_number === orderNum);
+
+    if (order) {
+      result.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <strong style="font-size:1.1rem">${order.order_number}</strong>
+          <span class="status" style="background:${order.status === 'shipped' ? '#22c55e20' : '#3b82f620'};color:${order.status === 'shipped' ? '#22c55e' : '#3b82f6'};padding:2px 10px;border-radius:999px;font-size:12px">${order.status.replace(/_/g, ' ')}</span>
+        </div>
+        <div style="color:var(--text-dim);font-size:0.9rem">
+          <div>Product: ${order.product}</div>
+          <div>Customer: ${order.customer}</div>
+          <div>Amount: ${order.amount}</div>
+          <div>Tracking: ${order.tracking || 'Not yet shipped'}</div>
+        </div>
+        <div style="margin-top:1rem;font-size:0.8rem;color:var(--text-dim)">
+          <a href="http://sin-asustufdashf15fx517zcfx517zc:8777" target="_blank" style="color:var(--accent)">View full production status →</a>
+        </div>
+      `;
+    } else {
+      result.innerHTML = '<p style="color:var(--text-dim)">Order not found. It may still be processing. Try again in a few minutes, or check your email for confirmation.</p>';
+    }
+  } catch {
+    result.innerHTML = '<p style="color:var(--text-dim)">Status lookup temporarily unavailable. Check your email for order confirmation.</p>';
+  }
+}
+</script>
 
 <footer>
   <div style="max-width:600px;margin:0 auto">

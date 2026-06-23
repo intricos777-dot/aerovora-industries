@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aerovora Industries — Operations Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0a0f; color: #e0e0e0; }
+        .header { background: #12121a; border-bottom: 1px solid #1e1e2e; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .header h1 { font-size: 20px; color: #f0f0f0; letter-spacing: -0.5px; }
+        .header h1 span { color: #f59e0b; }
+        .header .status-badge { background: #22c55e20; color: #22c55e; padding: 4px 12px; border-radius: 999px; font-size: 12px; border: 1px solid #22c55e40; }
+        .header .nav a { color: #888; text-decoration: none; margin-left: 24px; font-size: 14px; }
+        .header .nav a:hover { color: #f59e0b; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: #14141f; border: 1px solid #1e1e2e; border-radius: 12px; padding: 20px; }
+        .stat-card .label { font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card .value { font-size: 28px; font-weight: 600; color: #fff; margin-top: 8px; }
+        .stat-card .value.gold { color: #f59e0b; }
+        .stat-card .value.green { color: #22c55e; }
+        .stat-card .value.red { color: #ef4444; }
+        .stat-card .value.blue { color: #3b82f6; }
+        .section { margin-bottom: 32px; }
+        .section h2 { font-size: 16px; color: #888; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        table { width: 100%; border-collapse: collapse; background: #14141f; border: 1px solid #1e1e2e; border-radius: 12px; overflow: hidden; }
+        th { text-align: left; padding: 12px 16px; font-size: 12px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #1e1e2e; }
+        td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #1a1a2a; }
+        tr:last-child td { border-bottom: none; }
+        .status { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; }
+        .status.in_production { background: #3b82f620; color: #3b82f6; border: 1px solid #3b82f640; }
+        .status.payment_confirmed { background: #f59e0b20; color: #f59e0b; border: 1px solid #f59e0b40; }
+        .status.shipped { background: #22c55e20; color: #22c55e; border: 1px solid #22c55e40; }
+        .status.delivered { background: #22c55e20; color: #22c55e; border: 1px solid #22c55e40; }
+        .status.pending_payment { background: #66620; color: #888; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Aerovora <span>Industries</span> — Operations</h1>
+    <div style="display:flex;align-items:center;gap:16px">
+        <span class="status-badge">● Live</span>
+        <div class="nav">
+            <a href="/">Dashboard</a>
+            <a href="/orders">Orders</a>
+            <a href="/production">Production</a>
+            <a href="/inventory">Inventory</a>
+            <a href="https://intricos777-dot.github.io/aerovora-storefront" target="_blank">Storefront</a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="stats-grid">
+        <div class="stat-card"><div class="label">Total Orders</div><div class="value blue">{{ total_orders }}</div></div>
+        <div class="stat-card"><div class="label">In Production</div><div class="value gold">{{ in_production }}</div></div>
+        <div class="stat-card"><div class="label">Ready to Ship</div><div class="value green">{{ ready_to_ship }}</div></div>
+        <div class="stat-card"><div class="label">Shipped</div><div class="value green">{{ shipped }}</div></div>
+        <div class="stat-card"><div class="label">Low Stock Items</div><div class="value red">{{ low_stock }}</div></div>
+        <div class="stat-card"><div class="label">Revenue</div><div class="value green">{{ revenue_display }}</div></div>
+    </div>
+
+    <div class="section">
+        <h2>Recent Orders</h2>
+        {% if recent_orders %}
+        <table>
+            <tr><th>Order #</th><th>Customer</th><th>Product</th><th>Amount</th><th>Status</th><th>Date</th></tr>
+            {% for o in recent_orders %}
+            <tr>
+                <td>{{ o.order_number }}</td>
+                <td>{{ o.customer_name }}</td>
+                <td>{{ o.product_name }}</td>
+                <td>${{ "%.2f"|format(o.amount_cents / 100) }}</td>
+                <td><span class="status {{ o.status.value }}">{{ o.status.value.replace('_', ' ') }}</span></td>
+                <td>{{ o.created_at.strftime('%Y-%m-%d %H:%M') if o.created_at else '—' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p style="color:#666;padding:32px;text-align:center;background:#14141f;border:1px solid #1e1e2e;border-radius:12px;">No orders yet. Queue some from the storefront!</p>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h2>Production Stations</h2>
+        <table>
+            <tr><th>Station</th><th>Name</th><th>Description</th></tr>
+            {% for num, name, desc in stations %}
+            <tr>
+                <td>{{ num }}</td>
+                <td>{{ name }}</td>
+                <td style="color:#888">{{ desc }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+</body>
+</html>
