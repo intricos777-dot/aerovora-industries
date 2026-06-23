@@ -134,28 +134,52 @@ def _handle_checkout_completed(data, db):
     if existing:
         return
 
-    line_items = data.get("line_items", {}).get("data", [])
-    if not line_items:
+    try:
+        session = stripe.checkout.Session.retrieve(
+            session_id,
+            expand=["line_items.data.price.product_data", "customer_details"],
+        )
+    except stripe.error.StripeError:
         return
 
-    item = line_items[0]
-    price = item.get("price", {})
-    product_data = price.get("product_data", {})
-    sku = _map_stripe_price_to_sku(price.get("id", ""))
+    line_items = getattr(session, "line_items", None)
+    items_data = line_items.get("data", []) if line_items else []
+    if not items_data:
+        return
 
-    customer_details = data.get("customer_details", {})
+    item = items_data[0]
+    price = item.get("price", {}) if isinstance(item, dict) else item.price
+    price_id = price.get("id", "") if isinstance(price, dict) else getattr(price, "id", "")
+
+    product_data = None
+    if isinstance(price, dict):
+        product_data = price.get("product_data", {})
+    else:
+        pd = getattr(price, "product_data", None)
+        product_data = pd if pd else {}
+
+    sku = _map_stripe_price_to_sku(price_id)
+
+    customer_details = getattr(session, "customer_details", None) or data.get("customer_details", {})
+    if isinstance(customer_details, dict):
+        cd = customer_details
+    else:
+        cd = {"email": getattr(customer_details, "email", ""), "name": getattr(customer_details, "name", "")}
+
+    session_dict = session if isinstance(session, dict) else session.__dict__
+
     order = Order(
         order_number=next_order_number(db),
         stripe_session_id=session_id,
-        stripe_payment_intent=data.get("payment_intent"),
-        customer_email=customer_details.get("email", "unknown@example.com"),
-        customer_name=customer_details.get("name", "Unknown"),
+        stripe_payment_intent=getattr(session, "payment_intent", None) or data.get("payment_intent"),
+        customer_email=cd.get("email", "unknown@example.com"),
+        customer_name=cd.get("name", "Unknown"),
         sku=sku,
-        product_name=product_data.get("name", "AV-1 Apis Drone"),
-        amount_cents=data.get("amount_total", 0) or item.get("amount_total", 0),
+        product_name=product_data.get("name", "AV-1 Apis Drone") if isinstance(product_data, dict) else "AV-1 Apis Drone",
+        amount_cents=item.get("amount_total", 0) if isinstance(item, dict) else getattr(item, "amount_total", 0),
         status=OrderStatus.PAYMENT_CONFIRMED,
         payment_status=PaymentStatus.CONFIRMED,
-        shipping_tier=_infer_shipping_tier(data.get("shipping_options", [])),
+        shipping_tier=_infer_shipping_tier(session_dict.get("shipping_options", [])),
     )
     db.add(order)
     db.flush()
@@ -168,9 +192,9 @@ def _map_stripe_price_to_sku(price_id: str) -> str:
         "price_1TkwfeAF5qKRqiGoQ7kRzUvv": "AV1-S",
         "price_1TkwffAF5qKRqiGoYpFNyE4K": "AV1-P",
         "price_1TkwfgAF5qKRqiGoAdSGnImi": "AV1-C",
-        "price_1TkwfiAF5qKRqiGorNmHWTOP": "AV1-S",
-        "price_1TkwfjAF5qKRqiGoLjcHdZsR": "AV1-P",
-        "price_1TkwfkAF5qKRqiGo1YpXvITW": "AV1-C",
+        "price_1TkwfiAF5qKRqiGorNmHWTOP": "DaaS-SCOUT",
+        "price_1TkwfjAF5qKRqiGoLjcHdZsR": "DaaS-GROWER",
+        "price_1TkwfkAF5qKRqiGo1YpXvITW": "DaaS-SWARM",
     }
     return mapping.get(price_id, "AV1-S")
 
@@ -199,6 +223,12 @@ def _handle_payment_succeeded(data, db):
 
 
 def _create_production_unit(order, db):
+    daas_skus = ("DaaS-SCOUT", "DaaS-GROWER", "DaaS-SWARM")
+
+    if order.sku in daas_skus:
+        order.status = OrderStatus.PAYMENT_CONFIRMED
+        return
+
     unit = ProductionUnit(
         order_id=order.id,
         sku=order.sku,

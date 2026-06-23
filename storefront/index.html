@@ -212,6 +212,12 @@
     100% { transform: translateY(-10vh) scale(1); opacity: 0; }
   }
 
+  .banner { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 300; padding: 1rem 2rem; border-radius: 12px; font-weight: 600; font-size: 1rem; display: none; max-width: 600px; text-align: center; animation: slideDown 0.4s ease; }
+  .banner.show { display: block; }
+  .banner.success { background: rgba(0,229,160,0.15); border: 1px solid var(--accent); color: var(--accent); }
+  .banner.cancel { background: rgba(255,64,96,0.15); border: 1px solid var(--danger); color: var(--danger); }
+  @keyframes slideDown { 0% { transform: translateX(-50%) translateY(-20px); opacity: 0; } 100% { transform: translateX(-50%) translateY(0); opacity: 1; } }
+
   .tab-bar { display: flex; gap: 0; margin-bottom: 2rem; background: var(--surface); border-radius: 12px; padding: 0.25rem; border: 1px solid var(--border); }
   .tab { padding: 0.6rem 1.5rem; border-radius: 10px; border: none; background: transparent; color: var(--text-dim); font-weight: 500; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
   .tab.active { background: var(--accent); color: #000; }
@@ -223,6 +229,7 @@
 <body>
 
 <div class="particles" id="particles"></div>
+<div id="statusBanner" class="banner"></div>
 
 <!-- Navigation -->
 <nav>
@@ -720,6 +727,26 @@ async function trackOrder() {
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
+  // ── Success / Cancel Banner ──
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    const banner = document.getElementById('statusBanner');
+    if (params.get('success') === 'true') {
+      banner.className = 'banner success show';
+      banner.innerHTML = 'Payment successful! Your order is being processed. Check your email for confirmation.';
+      setTimeout(() => banner.classList.remove('show'), 8000);
+    } else if (params.get('canceled') === 'true') {
+      banner.className = 'banner cancel show';
+      banner.innerHTML = 'Payment canceled. No charges were made. Ready when you are!';
+      setTimeout(() => banner.classList.remove('show'), 8000);
+    }
+    // Clean URL without reloading
+    if (params.has('success') || params.has('canceled')) {
+      const clean = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, clean);
+    }
+  })();
+
   // Particle background
   (function() {
     const container = document.getElementById('particles');
@@ -793,10 +820,11 @@ async function trackOrder() {
         const stripe = Stripe(STRIPE_CONFIG.publicKey);
         const priceId = getPriceId(currentProduct);
         if (priceId) {
+          const productSlug = currentProduct.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
           const { error } = await stripe.redirectToCheckout({
             lineItems: [{ price: priceId, quantity: 1 }],
             mode: currentIsSubscription ? 'subscription' : 'payment',
-            successUrl: window.location.origin + '/?success=true',
+            successUrl: window.location.origin + `/?success=true&product=${productSlug}`,
             cancelUrl: window.location.origin + '/?canceled=true',
             customerEmail: email,
           });
