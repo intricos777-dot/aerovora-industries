@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 import stripe
 
-from database import (
+from .database import (
     init_db, get_db, SessionLocal, Order, ProductionUnit, InventoryItem,
     SupplierOrder, Shipment, OrderStatus, PaymentStatus
 )
