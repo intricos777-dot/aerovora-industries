@@ -8,11 +8,11 @@ set -euo pipefail
 
 echo "=== Aerovora Ad Launch: X + Facebook Marketplace ==="
 
-MARKETING_DIR="/root/Projects/aerovora-industries/business/marketing"
+MARKETING_DIR="$(cd "$(dirname "$0")" && pwd)"
 SCHEDULE_FILE="$MARKETING_DIR/schedule.csv"
 
 # Generate ad schedule
-cat > "$SCHEDULE_FILE" << CSV
+cat > "$SCHEDULE_FILE" << 'CSV'
 Day,Platform,Campaign,Content,Status
 1,X,Pollination Crisis,"40% of bee colonies lost. Nature needs backup. We built it.",scheduled
 1,Facebook,Greenhouse Revolution,"Meet your new farm worker. Never sleeps. Never quits.",scheduled
@@ -32,14 +32,14 @@ echo ""
 echo "=== Ad Launch Summary ==="
 echo ""
 echo "X (Twitter):"
-echo "  Campaigns: 3 ($3,800/mo budget)"
+echo "  Campaigns: 3 (\$3,800/mo budget)"
 echo "  Posts: 6x/week"
 echo ""
 echo "Facebook:"
-echo "  Campaigns: 2 ($2,100/mo budget)"
+echo "  Campaigns: 2 (\$2,100/mo budget)"
 echo "  Marketplace listings: 3"
 echo ""
-echo "Total monthly ad spend: $5,900"
+echo "Total monthly ad spend: \$5,900"
 echo ""
 echo "=== Next Steps ==="
 echo "  1. Set up X Ads account: https://ads.twitter.com"

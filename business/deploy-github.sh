@@ -14,7 +14,7 @@ echo "=== Aerovora Storefront — GitHub Pages Deploy ==="
 # Configuration
 REPO_NAME="aerovora-storefront"
 BRANCH="gh-pages"
-SOURCE_DIR="/root/Projects/aerovora-industries/storefront"
+SOURCE_DIR="$(cd "$(dirname "$0")/../storefront" && pwd)"
 
 # Check for GitHub CLI
 if ! command -v gh &>/dev/null; then
